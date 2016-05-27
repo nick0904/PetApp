@@ -1,56 +1,149 @@
 
-//資料來源: Taipei OpenData
-//http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=f4a75ba9-7721-4363-884d-c3820b0b917c
 
 import UIKit
 
 class ListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate{
     
-    var ary_json = [AnyObject]()
-    
     var _tableView:UITableView?
-    
+    var m_petData = [PetData]() //儲存下載資料
     var _indicator:UIActivityIndicatorView? //下載指示器
+    var _infoVC:InfomationViewController? //動物詳細料
+    var _connectVC:ConnectUSViewController? //連結動保處相關訊息頁面
+    private let m_refresh = UIRefreshControl() //資料重載
     
-    var _infoVC:InfomationViewController?
+    private let urlStr:String = "http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=f4a75ba9-7721-4363-884d-c3820b0b917c" //動保處 jsonData 連結
     
-    var _connectVC:ConnectUSViewController?
-
-
+//MARK: - Normal Function
+//-----------------------
     func refreshWithFrame(frame:CGRect) {
         
         self.view.frame = frame
         self.gradientBackground(self.view)
         self.title = "臺北市動物之家"
         
-        //==================  _tableView  ====================
+        //****************  _tableView  ****************
         _tableView = UITableView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
         _tableView?.dataSource = self
         _tableView?.delegate = self
         _tableView?.backgroundColor = UIColor.clearColor()
         _tableView?.separatorColor = UIColor.orangeColor()
         self.view.addSubview(_tableView!)
-            
+        
+        //***************  jsonData 下載  ****************
+        self.loadData()
+        
+        //***************  顯示下載指示器   ***************
         self.showIndicator()
         self._indicator?.startAnimating()
+        
+        //*************  下拉更新  **************
+        m_refresh.tintColor = UIColor.redColor()
+        let tableVC = UITableViewController()
+        tableVC.tableView = self._tableView
+        tableVC.refreshControl = self.m_refresh
+        m_refresh.addTarget(self, action: #selector(ListViewController.refreshData), forControlEvents: .ValueChanged)
 
-        let urlStr = NSURL(string: "http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=f4a75ba9-7721-4363-884d-c3820b0b917c")
+    }
+    
+//MARK: - refreshData
+//-------------------
+    func  refreshData() {
+        
+        self.loadData()
+        self.m_refresh.endRefreshing()
+    }
+
+//MARK: -  loadData
+//-----------------
+    func loadData() {
+        
+        self._indicator?.startAnimating()
+        let urlRequest = NSURLRequest(URL: NSURL(string: urlStr)!)
         let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithURL(urlStr!) { (_data, _response, _error) in
+        let task = session.dataTaskWithRequest(urlRequest) { (_data, _response, _error) in
             
             if _error != nil {
                 
-                print("loadDataError:\(_error?.localizedDescription)")
+                print("loadError:\(_error!.localizedDescription)")
+                return
             }
             
-             self.ary_json = self.parseJson(_data!)
+            self.m_petData = self.parseJson(_data!)
+            
+            dispatch_async(dispatch_get_main_queue(), { 
+                
+                self._indicator?.stopAnimating()
+                self._tableView?.reloadData()
+            })
+            
         }
-
+        
         task.resume()
+        
     }
     
-//MARK: - UITableView DataSource
-//------------------------------
+//MARK: - parseJson
+//----------------
+    func parseJson(data:NSData) -> [PetData] {
+        
+        var petData = [PetData]()
+        var jsonDataArray = [AnyObject]()
+        
+            do {
+                
+                //parseFirst
+                let originJSONData = try NSJSONSerialization.JSONObjectWithData(data, options:NSJSONReadingOptions.MutableContainers) as! NSDictionary
+                //parseSecond
+                let jsonDic = originJSONData.objectForKey("result") as! NSDictionary
+                //parseThird
+                jsonDataArray = jsonDic.objectForKey("results") as! [AnyObject]
+                
+            }
+            catch {
+                    
+                let parseError = error as NSError
+                print("parseError:\(parseError.localizedDescription)")
+            }
+        
+        for index in 0 ..< jsonDataArray.count {
+            
+            let dic = jsonDataArray[index]
+            let pet = PetData()
+            pet.name = dic.objectForKey("Name") as! String
+            pet.acceptNum = dic.objectForKey("AcceptNum") as! String
+            pet.sex = dic.objectForKey("Sex") as! String
+            pet.age = dic.objectForKey("Age") as! String
+            pet.bodyWeight = dic.objectForKey("Bodyweight") as! String
+            pet.hairType = dic.objectForKey("HairType") as! String
+            pet.note = dic.objectForKey("Note") as! String
+            pet.isSterilization = dic.objectForKey("IsSterilization") as! String
+            pet.imageName = dic.objectForKey("ImageName") as! String
+            
+            petData.append(pet)
+        }
+    
+        return petData
+    }
+    
+    
+//MARK: - showIndicator
+//---------------------
+    func showIndicator() {
+        
+        if self._indicator == nil {
+            
+            self._indicator = UIActivityIndicatorView(frame: CGRectZero)
+            self._indicator?.center = CGPoint(x: self.view.frame.size.width/2, y: self.view.frame.size.height/2)
+            self._indicator?.hidesWhenStopped = true
+            self._indicator?.activityIndicatorViewStyle = .WhiteLarge
+            self._indicator?.color = UIColor.redColor()
+            self.view.addSubview(self._indicator!)
+        }
+        
+    }
+    
+//MARK: - UITableView DataSource & Delegate
+//-----------------------------------------
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         
         return 1
@@ -58,7 +151,7 @@ class ListViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return self.ary_json.count
+        return self.m_petData.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -72,18 +165,15 @@ class ListViewController: UIViewController, UITableViewDataSource, UITableViewDe
             cell.selectionStyle = .None
         }
         
-        let dic = self.ary_json[indexPath.row] as! NSDictionary
+        cell.name_label?.text = m_petData[indexPath.row].name == "" ? "寶貝名字:  " + "暫無資料" : "寶貝名字:  " + "\(m_petData[indexPath.row].name)"
+        cell.acceptNum_label?.text = m_petData[indexPath.row] == "" ? "收容編號:  " + "暫無編號" : "收容編號:  " + "\(m_petData[indexPath.row].acceptNum)"
         
-        cell.name_label?.text = dic.objectForKey("Name") as? String == "" ? "寶貝名字:  " + "暫無資料" : "寶貝名字:  " + "\(dic.objectForKey("Name")!)"
-        
-        cell.acceptNum_label?.text = dic.objectForKey("AcceptNum") as? String == "" ? "收容編號:  " + "暫無編號" : "收容編號:  " + "\(dic.objectForKey("AcceptNum")!)"
-        
-        let url = NSURL(string: dic.objectForKey("ImageName") as! String)
+        let url = NSURL(string: m_petData[indexPath.row].imageName)
         let session = NSURLSession.sharedSession()
         
         let imgTask = session.dataTaskWithURL(url!) { (data, responce, error) in
             
-            NSOperationQueue.mainQueue().addOperationWithBlock({ 
+            NSOperationQueue.mainQueue().addOperationWithBlock({
                 
                 cell.cell_imgView?.image = UIImage(data: data!)
             })
@@ -102,23 +192,10 @@ class ListViewController: UIViewController, UITableViewDataSource, UITableViewDe
             _infoVC?.refreshWithFrame(self.view.frame, navH: self.navigationController!.navigationBar.frame.size.height)
         }
         
-        let dic = self.ary_json[indexPath.row] as! NSDictionary
-        
-        let tuples = (
-            
-            dic.objectForKey("Name") as! String,
-            dic.objectForKey("AcceptNum") as! String,
-            dic.objectForKey("Age") as! String,
-            dic.objectForKey("Sex") as! String,
-            dic.objectForKey("HairType") as! String,
-            dic.objectForKey("Bodyweight") as! String,
-            dic.objectForKey("IsSterilization") as! String,
-            dic.objectForKey("Note") as! String
-        )
-        _infoVC?.ary_data = [tuples]
+        _infoVC?.info_data = self.m_petData[indexPath.row]
         
         //image
-        let url = NSURL(string: dic.objectForKey("ImageName") as! String)
+        let url = NSURL(string: m_petData[indexPath.row].imageName)
         let session = NSURLSession.sharedSession()
         
         let imgTask = session.dataTaskWithURL(url!) { (data, responce, error) in
@@ -141,53 +218,7 @@ class ListViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return self.view.frame.size.height/4
     }
     
-//MARK: - paseJson
-//----------------
-    func parseJson(data:NSData) -> [AnyObject] {
-        
-        var jsonDataArray = [AnyObject]()
-        
-            do {
-                    
-                let originJSONData = try NSJSONSerialization.JSONObjectWithData(data, options:NSJSONReadingOptions.MutableContainers) as! NSDictionary
-                let jsonDic = originJSONData.objectForKey("result") as! NSDictionary
-                jsonDataArray = jsonDic.objectForKey("results") as! [AnyObject]
-                //self.ary_json = jsonDataArray
-                    
-                NSOperationQueue.mainQueue().addOperationWithBlock({ 
-                    
-                    self._tableView?.reloadData()
-                    self._indicator?.stopAnimating()
-                })
-                
-            }
-            catch {
-                    
-                let parseError = error as NSError
-                print("parseError:\(parseError.localizedDescription)")
-            }
-    
-        return jsonDataArray
-    }
-    
-    
-//MARK: - showIndicator
-//---------------------
-    func showIndicator() {
-        
-        if self._indicator == nil {
-            
-            self._indicator = UIActivityIndicatorView(frame: CGRectZero)
-            self._indicator?.center = CGPoint(x: self.view.frame.size.width/2, y: self.view.frame.size.height/2)
-            self._indicator?.hidesWhenStopped = true
-            self._indicator?.activityIndicatorViewStyle = .WhiteLarge
-            self._indicator?.color = UIColor.redColor()
-            self.view.addSubview(self._indicator!)
-        }
-        
-    }
-    
-    
+
 //MARK: - gradientBackground 背景漸層顏色
 //-------------------------------------
     func gradientBackground(view:UIView) {

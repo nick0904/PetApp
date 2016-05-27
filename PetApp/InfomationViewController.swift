@@ -7,9 +7,10 @@ class InfomationViewController: UIViewController,UITableViewDataSource {
     var detail_imgView:UIImageView?
     var detail_tableView:UITableView?
     var note_textView:UITextView?
-    var ary_data = [(name:String,num:String,age:String,sex:String,hairType:String,bodyweight:String,isSterilization:String,note:String)]()
+    var info_data:PetData!
     
-
+//MARK: - Normal Function
+//-----------------------
     func refreshWithFrame(frame:CGRect,navH:CGFloat) {
         
         self.view.frame = frame
@@ -86,35 +87,36 @@ class InfomationViewController: UIViewController,UITableViewDataSource {
             cell.selectionStyle = .None
         }
         
+        
         switch indexPath.row {
         case 0:
             cell.textLabel?.textColor = UIColor.whiteColor()
             let name = "  名字:  "
-            cell.textLabel?.text = ary_data[0].name == "" ? "\(name)"+"暫無資料" : "\(name)"+"\(ary_data[0].name)"
+            cell.textLabel?.text = info_data.name == "" ? "\(name)"+"暫無資料" : "\(name)"+"\(info_data.name)"
         case 1:
             cell.textLabel?.textColor = UIColor.lightGrayColor()
             let num = "  編號:  "
-            cell.textLabel?.text = ary_data[0].num == "" ? "\(num)"+"暫無編號" : "\(num)"+"\(ary_data[0].num)"
+            cell.textLabel?.text = info_data.acceptNum  == "" ? "\(num)"+"暫無編號" : "\(num)"+"\(info_data.acceptNum)"
         case 2:
             cell.textLabel?.textColor = UIColor.whiteColor()
             let age = "  年齡:  "
-            cell.textLabel?.text = ary_data[0].age == "" ? "\(age)"+"暫無資料" : "\(age)"+"\(ary_data[0].age)"
+            cell.textLabel?.text = info_data.age == "" ? "\(age)"+"暫無資料" : "\(age)"+"\(info_data.age)"
         case 3:
             cell.textLabel?.textColor = UIColor.lightGrayColor()
             let sex = "  性別:  "
-            cell.textLabel?.text = ary_data[0].age == "" ? "\(sex)"+"暫無資料" : "\(sex)"+"\(ary_data[0].sex)"
+            cell.textLabel?.text = info_data.sex == "" ? "\(sex)"+"暫無資料" : "\(sex)"+"\(info_data.sex)"
         case 4:
             cell.textLabel?.textColor = UIColor.whiteColor()
             let hairType = "  毛色:  "
-            cell.textLabel?.text = ary_data[0].hairType == "" ? "\(hairType)"+"暫無資料" : "\(hairType)"+"\(ary_data[0].hairType)"
+            cell.textLabel?.text = info_data.hairType == "" ? "\(hairType)"+"暫無資料" : "\(hairType)"+"\(info_data.hairType)"
         case 5:
             cell.textLabel?.textColor = UIColor.lightGrayColor()
             let bodyweight = "  體重:  "
-            cell.textLabel?.text = ary_data[0].bodyweight == "" ? "\(bodyweight)"+"暫無資料" : "\(bodyweight)"+"\(ary_data[0].bodyweight)"
+            cell.textLabel?.text = info_data.bodyWeight == "" ? "\(bodyweight)"+"暫無資料" : "\(bodyweight)"+"\(info_data.bodyWeight)"
         case 6:
             cell.textLabel?.textColor = UIColor.whiteColor()
             let isSterilization = "  絕育:  "
-            cell.textLabel?.text = ary_data[0].isSterilization == "" ? "\(isSterilization)"+"暫無資料" : "\(isSterilization)"+"\(ary_data[0].isSterilization)"
+            cell.textLabel?.text = info_data.isSterilization == "" ? "\(isSterilization)"+"暫無資料" : "\(isSterilization)"+"\(info_data.isSterilization)"
         default:
             break
         }
@@ -140,7 +142,7 @@ class InfomationViewController: UIViewController,UITableViewDataSource {
     override func viewWillAppear(animated: Bool) {
         
         self.detail_tableView?.setContentOffset(CGPointMake(0, 0), animated: false)
-        self.note_textView?.text = ary_data[0].note == "" ? "暫無資料":ary_data[0].note
+        self.note_textView?.text = self.info_data.note == "" ? "暫無資料" : self.info_data.note
     }
 
 

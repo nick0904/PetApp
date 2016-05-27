@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D1B80D8B1CF6977C00AC537E /* PetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B80D8A1CF6977C00AC537E /* PetData.swift */; };
+		D1B80D8D1CF6C03800AC537E /* AdoptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B80D8C1CF6C03800AC537E /* AdoptViewController.swift */; };
 		D1DEACB31CC93FA300FC6502 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1DEACB21CC93FA300FC6502 /* AppDelegate.swift */; };
 		D1DEACB51CC93FA300FC6502 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1DEACB41CC93FA300FC6502 /* ViewController.swift */; };
 		D1DEACBA1CC93FA300FC6502 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1DEACB91CC93FA300FC6502 /* Assets.xcassets */; };
@@ -23,6 +25,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D1B80D8A1CF6977C00AC537E /* PetData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PetData.swift; sourceTree = "<group>"; };
+		D1B80D8C1CF6C03800AC537E /* AdoptViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdoptViewController.swift; sourceTree = "<group>"; };
 		D1DEACAF1CC93FA300FC6502 /* PetApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PetApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1DEACB21CC93FA300FC6502 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D1DEACB41CC93FA300FC6502 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -53,6 +57,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D1B80D8E1CF6C04E00AC537E /* Connection */ = {
+			isa = PBXGroup;
+			children = (
+				D1E927AB1CCB017C002D87F6 /* ConnectUSViewController.swift */,
+				D1B80D8C1CF6C03800AC537E /* AdoptViewController.swift */,
+			);
+			name = Connection;
+			sourceTree = "<group>";
+		};
 		D1DEACA61CC93FA200FC6502 = {
 			isa = PBXGroup;
 			children = (
@@ -76,12 +89,12 @@
 			children = (
 				D1DEACB21CC93FA300FC6502 /* AppDelegate.swift */,
 				D1DEACB41CC93FA300FC6502 /* ViewController.swift */,
-				D1DEACB91CC93FA300FC6502 /* Assets.xcassets */,
-				D1DEACBB1CC93FA300FC6502 /* LaunchScreen.storyboard */,
-				D1DEACBE1CC93FA300FC6502 /* Info.plist */,
 				D1E927A71CCA7D90002D87F6 /* List */,
 				D1E927A81CCA7DB4002D87F6 /* Information */,
 				D1E9281E1CD07090002D87F6 /* sound */,
+				D1DEACB91CC93FA300FC6502 /* Assets.xcassets */,
+				D1DEACBB1CC93FA300FC6502 /* LaunchScreen.storyboard */,
+				D1DEACBE1CC93FA300FC6502 /* Info.plist */,
 			);
 			path = PetApp;
 			sourceTree = "<group>";
@@ -91,7 +104,8 @@
 			children = (
 				D1E927A11CC9DCD0002D87F6 /* ListViewController.swift */,
 				D1E927A51CCA4743002D87F6 /* MyTableViewCell.swift */,
-				D1E927AB1CCB017C002D87F6 /* ConnectUSViewController.swift */,
+				D1B80D8A1CF6977C00AC537E /* PetData.swift */,
+				D1B80D8E1CF6C04E00AC537E /* Connection */,
 				D1E927B11CCB288F002D87F6 /* MapViewController.swift */,
 			);
 			name = List;
@@ -187,8 +201,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1E927A41CCA4702002D87F6 /* InfomationViewController.swift in Sources */,
+				D1B80D8D1CF6C03800AC537E /* AdoptViewController.swift in Sources */,
 				D1DEACB51CC93FA300FC6502 /* ViewController.swift in Sources */,
 				D1DEACB31CC93FA300FC6502 /* AppDelegate.swift in Sources */,
+				D1B80D8B1CF6977C00AC537E /* PetData.swift in Sources */,
 				D1E927AC1CCB017C002D87F6 /* ConnectUSViewController.swift in Sources */,
 				D1E927A61CCA4743002D87F6 /* MyTableViewCell.swift in Sources */,
 				D1E927A21CC9DCD0002D87F6 /* ListViewController.swift in Sources */,
@@ -303,6 +319,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.PetApp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -314,6 +331,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.PetApp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

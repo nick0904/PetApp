@@ -8,6 +8,8 @@ class ViewController: UIViewController {
     var listVC:ListViewController?
     private var soundPlayer:AVAudioPlayer?
 
+//MARK: - Normal Function
+//-----------------------
     func refreshWithFrame(frame:CGRect) {
         
         self.view.frame = frame
@@ -47,6 +49,8 @@ class ViewController: UIViewController {
         
     }
     
+//MARK: - onstartBtAction
+//-----------------------
     func onstartBtAction(sender:UIButton) -> Void {
         
         self.soundPlayer?.play()
@@ -78,6 +82,8 @@ class ViewController: UIViewController {
 
     }
     
+//MARK: - pushListViewController
+//------------------------------
     func pushListViewController() {
         
         if listVC == nil {
